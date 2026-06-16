@@ -5,43 +5,68 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 usage() {
     cat <<EOF
 Usage:
-  mac setup dev [--refresh] [--debug]   Lay out dev apps across 3 displays (rotates on repeat)
-  mac reorg [display]         Reorganize all apps on one display (4x3 grid)
-  mac reorg --refresh [n]     Rebuild screen cache, then reorganize
+  mac window setup dev [--refresh] [--debug]   Dev layout across 3 displays (rotates each run)
+  mac w s dev [--refresh] [--debug]            Short form
+  mac window sweep [display]                   Sweep all apps onto one display (4x3 grid)
+  mac w sweep [display]                        Short form
+  mac w sw [display]                           Shorter alias for sweep
 
 Examples:
-  mac setup dev
-  mac reorg 2
-  mac reorg --refresh 1
+  mac window setup dev
+  mac w s dev
+  mac window sweep 2
+  mac w sw --refresh 1
 EOF
 }
 
-case "${1:-}" in
-    setup)
+expand_token() {
+    case "${1:-}" in
+        w|window)   echo "window" ;;
+        s|setup)    echo "setup" ;;
+        sw|sweep)   echo "sweep" ;;
+        *)          echo "${1:-}" ;;
+    esac
+}
+
+if [[ $# -eq 0 || "${1:-}" == "-h" || "${1:-}" == "--help" || "${1:-}" == "help" ]]; then
+    usage
+    exit 0
+fi
+
+cmd=$(expand_token "$1")
+shift
+
+case "$cmd" in
+    window)
+        sub=$(expand_token "${1:-}")
         shift
-        case "${1:-}" in
-            dev)
+        case "$sub" in
+            setup)
+                profile="${1:-}"
                 shift
-                exec "$SCRIPT_DIR/setup-dev.sh" "$@"
+                case "$profile" in
+                    dev)
+                        exec "$SCRIPT_DIR/setup-dev.sh" "$@"
+                        ;;
+                    *)
+                        echo "Unknown window setup profile: ${profile:-}" >&2
+                        usage
+                        exit 1
+                        ;;
+                esac
+                ;;
+            sweep)
+                exec "$SCRIPT_DIR/sweep.sh" "$@"
                 ;;
             *)
-                echo "Unknown setup profile: ${1:-}" >&2
+                echo "Unknown window command: ${sub:-}" >&2
                 usage
                 exit 1
                 ;;
         esac
         ;;
-    reorg)
-        shift
-        exec "$SCRIPT_DIR/reorg.sh" "$@"
-        ;;
-    -h|--help|help|"")
-        usage
-        [[ -n "${1:-}" ]] || exit 0
-        exit 0
-        ;;
     *)
-        echo "Unknown command: $1" >&2
+        echo "Unknown command: $cmd" >&2
         usage
         exit 1
         ;;

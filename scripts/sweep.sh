@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Usage: reorg [display_num] | reorg --refresh [display_num]
+# Usage: mac window sweep [display_num] | mac w sw [display_num]
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=lib/screens.sh
 source "$SCRIPT_DIR/lib/screens.sh"

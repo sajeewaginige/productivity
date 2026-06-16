@@ -1,16 +1,17 @@
-# mac & setup — Dev Window Layout
+# mac — Window Layout CLI
 
-CLI tools for organizing macOS windows across multiple displays during development work.
+Organize macOS windows across multiple displays during development work.
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `mac setup dev` | Tile VS Code, browsers, and terminals across 3 displays |
-| `mac reorg [n]` | Reorganize all apps onto one display (see [README.md](README.md)) |
-| `setup dev` | Shorthand for `mac setup dev` |
+| `mac window setup dev` | Tile VS Code, browsers, and terminals across 3 displays |
+| `mac w s dev` | Short form |
+| `mac window sweep [n]` | Sweep all apps onto one display (see [README.md](README.md)) |
+| `mac w sw [n]` | Short form |
 
-## `mac setup dev`
+## `mac window setup dev`
 
 Assigns application groups to dedicated displays and tiles windows edge-to-edge.
 
@@ -39,7 +40,7 @@ Browsers and terminals use the same adaptive grid on their assigned display.
 
 ### Rotation
 
-Each time you run `mac setup dev`, the three groups **rotate** across displays:
+Each time you run `mac window setup dev`, the three groups **rotate** across displays:
 
 ```
 Run 1: VS Code → 1, Browsers → 2, Terminals → 3
@@ -56,14 +57,14 @@ Rotation state is stored in `~/.kodez/setup-dev-state.json`.
 rotation 0 | VS Code -> display 1, Browsers -> display 2, Terminals -> display 3 | tiled: vscode=3, browser=2, terminal=1
 ```
 
-## `mac reorg`
+## `mac window sweep`
 
-Delegates to the `reorg` script. Moves all visible windows onto a single display in a 4×3 app grid.
+Moves all visible windows onto a single display in a 4×3 app grid.
 
 ```bash
-mac reorg           # display 1
-mac reorg 2         # display 2
-mac reorg --refresh # rebuild screen cache first
+mac window sweep           # display 1
+mac w sw 2                 # display 2
+mac window sweep --refresh # rebuild screen cache first
 ```
 
 ## Installation
@@ -87,11 +88,11 @@ The installer will:
 
 - Verify macOS, Bash, Python 3, and `osascript` are available
 - Set executable permissions on all scripts
-- Install `mac`, `setup`, and `reorg` wrappers to `~/.kodez/`
+- Install the `mac` wrapper to `~/.kodez/`
 - Add `~/.kodez` to your shell PATH (`.zshrc` or `.bash_profile`)
 - **Prompt for Accessibility permission** — shows a dialog, triggers the macOS permission request, and opens **System Settings → Privacy & Security → Accessibility**
 
-Without Accessibility, `mac setup dev` will report `tiled: vscode=0, browser=0, terminal=0` and windows will not move.
+Without Accessibility, `mac window setup dev` will report `tiled: vscode=0, browser=0, terminal=0` and windows will not move.
 
 ```bash
 ./install.sh --skip-accessibility   # non-interactive / skip the prompt
@@ -108,27 +109,25 @@ Without Accessibility, `mac setup dev` will report `tiled: vscode=0, browser=0, 
 
 | File | Purpose |
 |------|---------|
-| `~/.kodez/screen-cache.json` | Display sizes and positions (shared with `reorg`) |
-| `~/.kodez/setup-dev-state.json` | Rotation index for `setup dev` |
+| `~/.kodez/screen-cache.json` | Display sizes and positions |
+| `~/.kodez/setup-dev-state.json` | Rotation index for `mac window setup dev` |
 
 Rebuild screen cache after changing monitors:
 
 ```bash
-mac setup dev --refresh
-mac reorg --refresh
+mac window setup dev --refresh
+mac window sweep --refresh
 ```
 
 ## File layout
 
 ```
 ~/.kodez/
-  mac          → wrapper
-  setup        → wrapper
-  reorg        → wrapper
+  mac          → CLI entry point
 
 ~/projects/productivity/scripts/
   mac.sh       → CLI dispatcher
-  setup-dev.sh → dev layout logic
-  reorg.sh     → single-display grid layout
+  setup-dev.sh → dev layout logic (via mac window setup dev)
+  sweep.sh     → single-display grid layout (via mac window sweep)
   lib/screens.sh
 ```

@@ -22,7 +22,7 @@ usage() {
     cat <<EOF
 Usage: $(basename "$0") [options]
 
-Install mac, setup, and reorg CLI tools.
+Install the mac CLI tool.
 
 Options:
   --kodez-dir DIR         Install wrappers to DIR (default: ~/.kodez)
@@ -78,7 +78,7 @@ info "Python $PYTHON_VERSION"
 
 REQUIRED_SCRIPTS=(
     "$SCRIPT_ROOT/mac.sh"
-    "$SCRIPT_ROOT/reorg.sh"
+    "$SCRIPT_ROOT/sweep.sh"
     "$SCRIPT_ROOT/setup-dev.sh"
     "$SCRIPT_ROOT/lib/screens.sh"
     "$SCRIPT_ROOT/lib/setup-dev-state.py"
@@ -95,7 +95,7 @@ done
 
 info "Setting executable permissions..."
 chmod +x "$SCRIPT_ROOT/install.sh"
-chmod +x "$SCRIPT_ROOT/mac.sh" "$SCRIPT_ROOT/reorg.sh" "$SCRIPT_ROOT/setup-dev.sh"
+chmod +x "$SCRIPT_ROOT/mac.sh" "$SCRIPT_ROOT/sweep.sh" "$SCRIPT_ROOT/setup-dev.sh"
 chmod +x "$SCRIPT_ROOT/lib/setup-dev-state.py"
 chmod +x "$SCRIPT_ROOT/lib/accessibility.sh"
 
@@ -112,12 +112,10 @@ EOF
     chmod +x "$KODEZ_DIR/$name"
 }
 
-write_wrapper mac  "$SCRIPT_ROOT/mac.sh"
-write_wrapper setup "$SCRIPT_ROOT/mac.sh" setup
-write_wrapper reorg "$SCRIPT_ROOT/reorg.sh"
+write_wrapper mac "$SCRIPT_ROOT/mac.sh"
 
-# Backward-compatible shim if anything calls reorg.sh directly.
-write_wrapper reorg.sh "$SCRIPT_ROOT/reorg.sh"
+# Remove legacy direct-entry wrappers (mac-only CLI going forward).
+rm -f "$KODEZ_DIR/setup" "$KODEZ_DIR/reorg" "$KODEZ_DIR/reorg.sh" "$KODEZ_DIR/sweep"
 
 pick_shell_rc() {
     if [[ -n "${ZSH_VERSION:-}" ]]; then
@@ -136,7 +134,7 @@ pick_shell_rc() {
 
 add_path_to_shell() {
     local path_line="export PATH=\"$KODEZ_DIR:\$PATH\""
-    local marker="# productivity-scripts (mac, setup, reorg)"
+    local marker="# productivity-scripts (mac)"
 
     pick_shell_rc
     touch "$SHELL_RC"
@@ -190,7 +188,7 @@ if [[ "$SKIP_ACCESSIBILITY" -eq 0 ]]; then
                 ;;
             opened-settings)
                 warn "Enable $TERMINAL_APP in the Accessibility list, then run:"
-                warn "  mac setup dev"
+                warn "  mac window setup dev"
                 ;;
             skipped)
                 warn "Skipped Accessibility setup. Window tiling will not work until enabled."
@@ -211,20 +209,18 @@ echo -e "${GREEN}Installation complete!${NC}"
 cat <<EOF
 
   Source:    $SCRIPT_ROOT
-  Wrappers:  $KODEZ_DIR/mac
-             $KODEZ_DIR/setup
-             $KODEZ_DIR/reorg
+  Wrapper:   $KODEZ_DIR/mac
   Terminal:  $TERMINAL_APP
 
   Commands:
-    mac setup dev       # dev layout across 3 displays (rotates each run)
-    mac reorg [n]       # reorganize all apps on display n
-    setup dev           # shorthand
-    reorg [n]           # shorthand
+    mac window setup dev   # dev layout across 3 displays (rotates each run)
+    mac w s dev            # short form
+    mac window sweep [n]   # sweep all apps onto display n
+    mac w sw [n]           # short form
 
   Docs:
-    $SCRIPT_ROOT/README.md
-    $SCRIPT_ROOT/README-setup-mac.md
+    $SCRIPT_ROOT/../README.md
+    $SCRIPT_ROOT/../README-setup-mac.md
 
 EOF
 
@@ -233,9 +229,9 @@ if [[ "$ACCESSIBILITY_OK" -eq 0 && "$SKIP_ACCESSIBILITY" -eq 0 ]]; then
 fi
 
 if [[ "$SKIP_PATH" -eq 0 ]]; then
-    echo "  Ensure PATH is loaded, then run: mac setup dev"
+    echo "  Ensure PATH is loaded, then run: mac window setup dev"
 else
-    echo "  Run with full path: $KODEZ_DIR/mac setup dev"
+    echo "  Run with full path: $KODEZ_DIR/mac window setup dev"
 fi
 
 echo ""

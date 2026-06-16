@@ -75,14 +75,14 @@ prompt_accessibility_permission() {
     choice=$(osascript <<EOF 2>/dev/null || echo "Later"
 set terminalApp to "$terminal_app"
 try
-    display dialog "mac, setup, and reorg need Accessibility permission for " & terminalApp & ".
+    display dialog "mac needs Accessibility permission for " & terminalApp & ".
 
 Without this, window tiling will not work (you will see tiled: vscode=0, browser=0, terminal=0).
 
 Steps:
 1. Click Open Settings below
 2. Enable the toggle for " & terminalApp & "
-3. Run: mac setup dev" buttons {"Open Settings", "Later"} default button 1 with title "Accessibility Required" giving up after 120
+3. Run: mac window setup dev" buttons {"Open Settings", "Later"} default button 1 with title "Accessibility Required" giving up after 120
     return button returned of result
 on error
     return "Later"

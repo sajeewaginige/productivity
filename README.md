@@ -9,18 +9,18 @@ cd ~/projects/productivity/scripts
 ./install.sh
 ```
 
-This checks dependencies, sets permissions, installs wrappers to `~/.kodez/`, and updates your shell PATH.
+This checks dependencies, sets permissions, installs the `mac` CLI to `~/.kodez/`, and updates your shell PATH.
 
 ## Quick reference
 
 | Command | What it does |
 |---------|-------------|
-| `mac setup dev` | VS Code / browsers / terminals across 3 displays (rotates each run) |
-| `mac reorg [n]` | All apps onto one display in a 4×3 grid |
-| `reorg [n]` | Same as `mac reorg` |
-| `setup dev` | Same as `mac setup dev` |
+| `mac window setup dev` | VS Code / browsers / terminals across 3 displays (rotates each run) |
+| `mac w s dev` | Short form of the above |
+| `mac window sweep [n]` | All apps onto one display in a 4×3 grid |
+| `mac w sw [n]` | Short form |
 
-## reorg
+## `mac window sweep`
 
 Moves all visible (non-minimized) application windows onto a chosen display and arranges them in a tidy grid.
 
@@ -36,10 +36,9 @@ Moves all visible (non-minimized) application windows onto a chosen display and 
 ### Usage
 
 ```bash
-reorg              # display 1
-reorg 2            # display 2
-reorg --refresh    # rebuild screen cache, then display 1
-mac reorg 3        # same via mac CLI
+mac window sweep       # display 1
+mac w sw 2             # display 2
+mac window sweep --refresh
 ```
 
 ### Notes
@@ -48,7 +47,7 @@ mac reorg 3        # same via mac CLI
 - More than 12 apps reuse grid cells with a slight offset
 - Re-run with `--refresh` after connecting or disconnecting monitors
 
-## mac & setup
+## `mac window setup dev`
 
 See **[README-setup-mac.md](README-setup-mac.md)** for dev layout details, rotation behaviour, and supported applications.
 
