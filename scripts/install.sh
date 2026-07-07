@@ -215,8 +215,10 @@ cat <<EOF
   Commands:
     mac window setup dev   # dev layout across 3 displays (rotates each run)
     mac w s dev            # short form
-    mac window sweep [n]   # sweep all apps onto display n
-    mac w sw [n]           # short form
+    mac window sweep [n]           # sweep all apps onto display n
+    mac window sweep <app> [n]     # sweep one app onto display n
+    mac w sw [n]                   # short form
+    mac w sw <app> [n]             # short form for single-app sweep
 
   Docs:
     $SCRIPT_ROOT/../README.md

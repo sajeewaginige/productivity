@@ -1,22 +1,38 @@
 #!/bin/bash
 
-# Usage: mac window sweep [display_num] | mac w sw [display_num]
+# Usage:
+#   mac window sweep [display_num]                  # all apps onto one display
+#   mac window sweep <app> [display_num]            # one app onto one display
+#   mac window sweep chrome|safari|finder|code ...  # known app aliases
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=lib/screens.sh
 source "$SCRIPT_DIR/lib/screens.sh"
 
 DISPLAY_NUM=1
 REFRESH=0
+TARGET="all"
 
-if [[ "${1:-}" == "--refresh" ]]; then
-    REFRESH=1
-    DISPLAY_NUM=${2:-1}
-elif [[ -n "${1:-}" ]]; then
-    DISPLAY_NUM=$1
-fi
+for arg in "$@"; do
+    case "$arg" in
+        --refresh) REFRESH=1 ;;
+        [0-9]*) DISPLAY_NUM=$arg ;;
+        *)
+            if [[ -n "$arg" ]]; then
+                TARGET="$arg"
+            fi
+            ;;
+    esac
+done
 
 load_screen_cache
 read -r TARGET_X TARGET_Y SCREEN_W SCREEN_H < <(get_screen_dims "$DISPLAY_NUM")
+
+if [[ "$TARGET" != "all" ]]; then
+    RESULT=$(osascript "$SCRIPT_DIR/lib/sweep-app.applescript" \
+        "$TARGET" "$TARGET_X" "$TARGET_Y" "$SCREEN_W" "$SCREEN_H")
+    echo "$RESULT"
+    exit 0
+fi
 
 osascript - "$TARGET_X" "$TARGET_Y" "$SCREEN_W" "$SCREEN_H" <<'APPLESCRIPT'
 on run argv

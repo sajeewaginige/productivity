@@ -18,7 +18,9 @@ This checks dependencies, sets permissions, installs the `mac` CLI to `~/.kodez/
 | `mac window setup dev` | VS Code / browsers / terminals across 3 displays (rotates each run) |
 | `mac w s dev` | Short form of the above |
 | `mac window sweep [n]` | All apps onto one display in a 4×3 grid |
+| `mac window sweep <app> [n]` | Sweep one app onto display *n* as a single window |
 | `mac w sw [n]` | Short form |
+| `mac w sw <app> [n]` | Short form for single-app sweep |
 
 ## `mac window sweep`
 
@@ -39,7 +41,25 @@ Moves all visible (non-minimized) application windows onto a chosen display and 
 mac window sweep       # display 1
 mac w sw 2             # display 2
 mac window sweep --refresh
+mac window sweep chrome    # Chrome onto display 1
+mac window sweep safari 2  # Safari onto display 2
+mac window sweep finder
+mac w sw code
 ```
+
+### `mac window sweep <app>`
+
+Consolidates one application's windows onto a chosen display.
+
+**Browsers** (chrome, safari, arc, brave, edge, chromium, orion, vivaldi, browser) — merges tabs into one window, then resizes to fill the display.
+
+**Finder** — uses Window → Merge All Windows, then positions the result.
+
+**Editors & terminals** (code, vscode, cursor, terminal, iterm, warp, kitty, alacritty, wezterm, hyper) — maximizes the main window on the display and minimizes the rest (recoverable from the Dock).
+
+**Any running app** — pass the process name (e.g. `mac window sweep Slack`) to use the editor/terminal strategy.
+
+Supported aliases match the apps used by `mac window setup dev`, plus `finder` and `browser` (first running browser).
 
 ### Notes
 

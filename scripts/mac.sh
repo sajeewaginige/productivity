@@ -8,13 +8,22 @@ Usage:
   mac window setup dev [--refresh] [--debug]   Dev layout across 3 displays (rotates each run)
   mac w s dev [--refresh] [--debug]            Short form
   mac window sweep [display]                   Sweep all apps onto one display (4x3 grid)
+  mac window sweep <app> [display]             Sweep one app onto a display (one window)
   mac w sweep [display]                        Short form
   mac w sw [display]                           Shorter alias for sweep
+  mac w sw <app> [display]                     Short form for single-app sweep
+
+  Apps: chrome, safari, firefox, arc, brave, edge, finder, code, cursor,
+        terminal, iterm, warp, browser (first running match)
 
 Examples:
   mac window setup dev
   mac w s dev
   mac window sweep 2
+  mac window sweep chrome
+  mac window sweep safari 2
+  mac window sweep finder
+  mac w sw code
   mac w sw --refresh 1
 EOF
 }
